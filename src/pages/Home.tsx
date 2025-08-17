@@ -1,50 +1,53 @@
 // src/pages/Home.tsx
-import React, { useMemo, useState } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { TOOL_GROUPS } from '../app/toolCatalog';
-import type { ToolItem } from '../app/toolCatalog';
-import type { ToolGroup } from '../app/toolCatalog';
-import { Card, CardHeader, CardContent } from '../components/ui/Card';
-import { AdBox } from '../components/layout/AdBox';
+import type { ToolItem, ToolGroup } from '../app/toolCatalog';
+import { Card, CardContent, CardHeader } from '../components/ui/Card';
 
+const ADS_ENABLED = import.meta.env.VITE_ADS_ENABLED === 'true'; // keep ads off until we have real content
+
+// Compact, two-row card with fixed heights so everything aligns
 const ToolCard = ({ item }: { item: ToolItem }) => {
   const Icon = item.icon;
   return (
     <motion.div
-      initial={{ opacity: 0, y: 12 }}
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.25 }}
+      transition={{ duration: 0.2 }}
     >
-      <Card className="h-full hover:shadow-md transition-shadow">
-        <CardHeader className="flex items-center gap-3">
-          <div className="p-2 rounded-xl bg-zinc-50 border border-zinc-100">
-            <Icon className="size-5" />
+      <Card className="h-full flex flex-col hover:shadow-md transition-shadow">
+        {/* Header (taller than button area, compact spacing) */}
+        <CardHeader className="flex items-start gap-2 h-24 py-3">
+          <div className="p-1.5 rounded-lg bg-zinc-50 border border-zinc-100 shrink-0">
+            <Icon className="size-4" />
           </div>
           <div className="flex-1">
-            <div className="font-semibold">{item.title}</div>
-            <div className="text-sm text-zinc-500">{item.desc}</div>
-          </div>
-          <span className="text-xs px-2 py-1 rounded-full bg-zinc-100 text-zinc-700 whitespace-nowrap">
-            {item.pill}
-          </span>
-        </CardHeader>
-        <CardContent>
-          <div className="border border-dashed border-zinc-300 rounded-xl p-6 text-center">
-            <p className="text-sm text-zinc-600 mb-3">
-              {item.implemented ? 'Open the tool page' : 'Coming soon'}
+            <div className="font-semibold leading-tight text-[15px]">{item.title}</div>
+            {/* clamp to ~2 lines without plugin */}
+            <p className="text-[13px] text-zinc-500 leading-snug max-h-[36px] overflow-hidden">
+              {item.desc}
             </p>
+          </div>
+        </CardHeader>
+
+        {/* Button area (smaller, fixed height) */}
+        <CardContent className="flex-1 py-3">
+          <div className="h-20 border border-dashed border-zinc-300 rounded-lg p-3 grid place-items-center">
             {item.implemented ? (
               <Link
                 to={item.to}
-                className="inline-block px-3 py-2 rounded-lg bg-black text-white text-sm"
+                className="inline-block px-3 py-1.5 rounded-md bg-black text-white text-[13px]"
+                aria-label={item.title}
               >
-                Open {item.title}
+                {item.title}
               </Link>
             ) : (
               <button
                 disabled
-                className="px-3 py-2 rounded-lg bg-zinc-200 text-zinc-600 text-sm cursor-not-allowed"
+                className="px-3 py-1.5 rounded-md bg-zinc-200 text-zinc-600 text-[13px] cursor-not-allowed"
+                aria-disabled
               >
                 Coming soon
               </button>
@@ -56,9 +59,17 @@ const ToolCard = ({ item }: { item: ToolItem }) => {
   );
 };
 
-const Section = ({ meta, children }: { meta: ToolGroup; children: React.ReactNode }) => (
-  <section className="mb-10">
-    <div className="flex items-center gap-2 mb-4">
+const Section = ({
+  id,
+  meta,
+  children,
+}: {
+  id: string;
+  meta: ToolGroup;
+  children: React.ReactNode;
+}) => (
+  <section id={id} className="mb-8 scroll-mt-24">
+    <div className="flex items-center gap-2 mb-3">
       <div
         className={`size-8 grid place-items-center rounded-xl bg-gradient-to-br ${meta.color} text-white`}
       >
@@ -71,13 +82,6 @@ const Section = ({ meta, children }: { meta: ToolGroup; children: React.ReactNod
 );
 
 export default function Home() {
-  // Toggle between PDF-only and All tools
-  const [mode, setMode] = useState<'all' | 'pdf'>('all');
-
-  const groups = useMemo(() => {
-    return mode === 'pdf' ? { pdf: TOOL_GROUPS.pdf } : TOOL_GROUPS;
-  }, [mode]);
-
   return (
     <>
       {/* Hero */}
@@ -95,43 +99,19 @@ export default function Home() {
         </p>
         <div className="mt-5 flex flex-wrap items-center justify-center gap-2 text-xs text-zinc-600">
           <span className="px-2 py-1 rounded-full bg-zinc-100">No login</span>
-          <span className="px-2 py-1 rounded-full bg-zinc-100">Drag & drop</span>
+          <span className="px-2 py-1 rounded-full bg-zinc-100">Drag &amp; drop</span>
           <span className="px-2 py-1 rounded-full bg-zinc-100">PWA offline</span>
           <span className="px-2 py-1 rounded-full bg-zinc-100">Privacy-first</span>
-        </div>
-
-        {/* Mode toggle */}
-        <div className="mt-6 flex items-center justify-center gap-2">
-          <button
-            onClick={() => setMode('pdf')}
-            className={`px-3 py-1.5 rounded-lg text-sm border ${
-              mode === 'pdf'
-                ? 'bg-black text-white border-black'
-                : 'bg-white text-zinc-800 border-zinc-200'
-            }`}
-          >
-            PDF-only
-          </button>
-          <button
-            onClick={() => setMode('all')}
-            className={`px-3 py-1.5 rounded-lg text-sm border ${
-              mode === 'all'
-                ? 'bg-black text-white border-black'
-                : 'bg-white text-zinc-800 border-zinc-200'
-            }`}
-          >
-            All tools
-          </button>
         </div>
       </motion.div>
 
       {/* Content grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mt-10">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mt-6">
         {/* Main content */}
-        <div className="lg:col-span-3 space-y-10">
-          {Object.entries(groups).map(([key, group]) => (
-            <Section key={key} meta={group}>
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
+        <div className="lg:col-span-3 space-y-8">
+          {Object.entries(TOOL_GROUPS).map(([key, group]) => (
+            <Section key={key} id={key} meta={group}>
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
                 {group.items.map((it) => (
                   <ToolCard key={it.key} item={it} />
                 ))}
@@ -140,10 +120,18 @@ export default function Home() {
           ))}
         </div>
 
-        {/* Sidebar (ads + trust) */}
+        {/* Sidebar (ads hidden unless enabled) */}
         <div className="space-y-4">
-          <AdBox />
-          <AdBox />
+          {ADS_ENABLED && (
+            <>
+              <div className="rounded-xl border border-zinc-200 bg-zinc-50 text-zinc-500 text-xs grid place-items-center h-28">
+                Ad placeholder (336×280 / responsive)
+              </div>
+              <div className="rounded-xl border border-zinc-200 bg-zinc-50 text-zinc-500 text-xs grid place-items-center h-28">
+                Ad placeholder (336×280 / responsive)
+              </div>
+            </>
+          )}
           <Card>
             <CardHeader>
               <div className="font-semibold">Why FileTools?</div>
@@ -160,7 +148,7 @@ export default function Home() {
       </div>
 
       {/* FAQ / SEO */}
-      <div className="mt-12">
+      <div className="mt-10">
         <Card>
           <CardHeader>
             <div className="text-lg font-semibold">Frequently Asked Questions</div>
@@ -184,7 +172,7 @@ export default function Home() {
             <div>
               <div className="font-medium">Which browsers are supported?</div>
               <p>
-                Latest Chrome, Edge, Firefox, and Safari on desktop & mobile. No extensions
+                Latest Chrome, Edge, Firefox, and Safari on desktop &amp; mobile. No extensions
                 required.
               </p>
             </div>
