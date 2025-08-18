@@ -5,8 +5,10 @@ import { Link } from 'react-router-dom';
 import { TOOL_GROUPS } from '../app/toolCatalog';
 import type { ToolItem, ToolGroup } from '../app/toolCatalog';
 import { Card, CardContent, CardHeader } from '../components/ui/Card';
+import { SeoHead } from '../components/seo/SeoHead';
 
-const ADS_ENABLED = import.meta.env.VITE_ADS_ENABLED === 'true'; // keep ads off until we have real content
+const ADS_ENABLED = import.meta.env.VITE_ADS_ENABLED === 'true';
+const SITE_URL = (import.meta.env.VITE_SITE_URL as string) || 'https://filetools-eight.vercel.app';
 
 // Compact, two-row card with fixed heights so everything aligns
 const ToolCard = ({ item }: { item: ToolItem }) => {
@@ -39,7 +41,7 @@ const ToolCard = ({ item }: { item: ToolItem }) => {
               <Link
                 to={item.to}
                 className="inline-block px-3 py-1.5 rounded-md bg-black text-white text-[13px]"
-                aria-label={item.title}
+                aria-label={`Open ${item.title} tool`}
               >
                 {item.title}
               </Link>
@@ -82,8 +84,50 @@ const Section = ({
 );
 
 export default function Home() {
+  const faq = [
+    {
+      q: 'Are my files uploaded?',
+      a: 'For most tools, processing happens in your browser using WebAssembly. Your files never leave your device. Some conversions (like DOCX→PDF) may require a server — those are clearly labeled.',
+    },
+    {
+      q: 'Is it free?',
+      a: 'Yes. Core tools are free and supported by privacy-respecting ads. Heavy/batch tasks may offer an optional Pro mode with higher limits.',
+    },
+    {
+      q: 'Which browsers are supported?',
+      a: 'Latest Chrome, Edge, Firefox, and Safari on desktop & mobile. No extensions required.',
+    },
+  ];
+
+  const jsonLd = [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      name: 'FileTools',
+      url: `${SITE_URL}/`,
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: faq.map(({ q, a }) => ({
+        '@type': 'Question',
+        name: q,
+        acceptedAnswer: { '@type': 'Answer', text: a },
+      })),
+    },
+  ];
+
   return (
     <>
+      {/* SEO head */}
+      <SeoHead
+        title="Free Online PDF, Image & Video Tools — Fast, Private, No Sign-Up | FileTools"
+        description="Merge, compress, convert and resize files in your browser. 100% private, no uploads required, mobile-friendly and free to use."
+        path="/"
+        keywords="merge pdf, compress pdf, jpg to pdf, image converter, video compressor, pdf tools, online file tools"
+        jsonLd={jsonLd}
+      />
+
       {/* Hero */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
@@ -91,17 +135,20 @@ export default function Home() {
         className="text-center"
       >
         <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight mb-3">
-          Free Online File Tools
+          Free Online PDF, Image &amp; Video Tools
         </h1>
         <p className="text-zinc-600 max-w-2xl mx-auto">
-          Convert, compress, and merge files instantly. 100% private. Most tasks run{' '}
-          <span className="font-medium">in your browser</span> — files never leave your device.
+          Fast, free file utilities to merge, compress, convert, resize and more.{' '}
+          <span className="font-medium">
+            Private by design — all processing happens in your browser. Your files never leave your
+            device.
+          </span>
         </p>
         <div className="mt-5 flex flex-wrap items-center justify-center gap-2 text-xs text-zinc-600">
           <span className="px-2 py-1 rounded-full bg-zinc-100">No login</span>
           <span className="px-2 py-1 rounded-full bg-zinc-100">Drag &amp; drop</span>
           <span className="px-2 py-1 rounded-full bg-zinc-100">PWA offline</span>
-          <span className="px-2 py-1 rounded-full bg-zinc-100">Privacy-first</span>
+          <span className="px-2 py-1 rounded-full bg-zinc-100">Private: in-browser</span>
         </div>
       </motion.div>
 
@@ -138,7 +185,7 @@ export default function Home() {
             </CardHeader>
             <CardContent>
               <ul className="list-disc pl-5 text-sm text-zinc-700 space-y-2">
-                <li>Private: most actions run locally via WebAssembly.</li>
+                <li>Private by design — processing runs locally in your browser.</li>
                 <li>No tracking of file contents. Ever.</li>
                 <li>Clean UI, mobile-first, no popups.</li>
               </ul>
@@ -159,7 +206,7 @@ export default function Home() {
               <p>
                 For most tools, processing happens in your browser using WebAssembly. That means
                 your files never leave your device. Some conversions (like DOCX→PDF) may require a
-                server—those are clearly labeled.
+                server — those are clearly labeled.
               </p>
             </div>
             <div>

@@ -3,14 +3,16 @@ import { mergePdf } from './mergePdf';
 import { downloadBlob } from '../../../utils/download';
 import { Card, CardContent, CardHeader } from '../../../components/ui/Card';
 import { GripVertical, X } from 'lucide-react';
+import { SeoHead } from '../../../components/seo/SeoHead';
 
 import { getDocument, GlobalWorkerOptions } from 'pdfjs-dist';
 import workerSrc from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
 GlobalWorkerOptions.workerSrc = workerSrc;
 
 const MAX_FILES = 20;
-const MAX_FILE_BYTES = 25 * 1024 * 1024; // 25 MB per file
-const MAX_TOTAL_BYTES = 100 * 1024 * 1024; // 100 MB total
+const MAX_FILE_BYTES = 25 * 1024 * 1024;
+const MAX_TOTAL_BYTES = 100 * 1024 * 1024;
+const SITE_URL = (import.meta.env.VITE_SITE_URL as string) || 'https://filetools-eight.vercel.app';
 
 type Picked = {
   file: File;
@@ -189,6 +191,57 @@ export default function MergePdfPage() {
 
   return (
     <div className="space-y-6">
+      {/* Page SEO */}
+      <SeoHead
+        title="Merge PDF Online — Combine PDF Files Free (No Sign-Up, No Watermark) | FileTools"
+        description="Merge multiple PDF files into one in your browser. Drag & drop, reorder, and download the combined PDF. Free, fast, and private — files never leave your device. No watermark."
+        path="/merge-pdf"
+        image="/og/og-merge-pdf.png"
+        type="website"
+        keywords="merge pdf online, combine pdfs, join pdf files, merge pdf free, merge pdf without watermark, reorder pdf pages, secure pdf merger, private pdf tool"
+        jsonLd={[
+          // The page itself
+          {
+            '@context': 'https://schema.org',
+            '@type': 'WebPage',
+            name: 'Merge PDF Online',
+            url: `${SITE_URL}/merge-pdf`,
+            inLanguage: 'en',
+            isPartOf: { '@type': 'WebSite', name: 'FileTools', url: `${SITE_URL}/` },
+          },
+          // Breadcrumbs for richer SERP
+          {
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/` },
+              {
+                '@type': 'ListItem',
+                position: 2,
+                name: 'Merge PDF',
+                item: `${SITE_URL}/merge-pdf`,
+              },
+            ],
+          },
+          // The tool as a free web app
+          {
+            '@context': 'https://schema.org',
+            '@type': 'SoftwareApplication',
+            name: 'FileTools — Merge PDF',
+            applicationCategory: 'WebApplication',
+            operatingSystem: 'Any',
+            url: `${SITE_URL}/merge-pdf`,
+            offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+            featureList: [
+              'Drag-and-drop upload',
+              'Reorder PDFs before merge',
+              'Client-side processing (privacy-first)',
+              'No watermark',
+            ],
+          },
+        ]}
+      />
+
       {busy && (
         <div className="fixed inset-0 z-30 bg-black/50 grid place-items-center">
           <div className="rounded-2xl bg-white p-6 w-[min(92vw,560px)] shadow-lg">
@@ -207,15 +260,21 @@ export default function MergePdfPage() {
 
       <h1 className="text-2xl font-bold">Merge PDF</h1>
       <p className="text-sm text-zinc-600">
-        Combine multiple PDFs into one. Processing happens in your browser—files never leave your
-        device.
+        Merge PDF files online. Drag &amp; drop, reorder, and download a single combined PDF.{' '}
+        <span className="font-medium">
+          Private by design — all processing happens in your browser. Your files never leave your
+          device. No watermark.
+        </span>
       </p>
 
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <div className="font-semibold">Your PDFs</div>
-            <label className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-black text-white text-sm cursor-pointer">
+            <div className="font-semibold">Your PDF files</div>
+            <label
+              className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-black text-white text-sm cursor-pointer"
+              aria-label="Add PDF files to merge"
+            >
               <input
                 type="file"
                 accept="application/pdf,.pdf"
@@ -248,8 +307,10 @@ export default function MergePdfPage() {
               }
               role="button"
               tabIndex={0}
+              aria-label="Open file picker to add PDFs"
             >
-              Drag & drop PDFs here, or click <span className="underline">Add PDFs</span>.
+              Drag &amp; drop PDFs here, or click <span className="underline">Add PDFs</span> to
+              upload. Reorder by dragging.
               <div className="mt-2 text-xs text-zinc-500">
                 Limits: up to {MAX_FILES} files • each ≤ {formatMB(MAX_FILE_BYTES)} MB • total ≤{' '}
                 {formatMB(MAX_TOTAL_BYTES)} MB
@@ -306,7 +367,7 @@ export default function MergePdfPage() {
                       <button
                         onClick={() => remove(p.id)}
                         className="text-xs px-2 py-1 rounded border border-zinc-200 hover:bg-zinc-50 inline-flex items-center gap-1"
-                        aria-label="Remove"
+                        aria-label={`Remove ${p.file.name}`}
                       >
                         <X className="size-3.5" />
                         Remove
