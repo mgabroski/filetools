@@ -7,6 +7,7 @@ import CompressPdfPage from '../features/pdf/compress/CompressPdfPage';
 import PdfToJpgPage from '../features/pdf/pdf-to-jpg/PdfToJpgPage';
 import SplitPdfPage from '../features/pdf/split/SplitPdfPage';
 import RotatePdfPage from '../features/pdf/rotate/RotatePdfPage';
+import ReorderPdfPage from '../features/pdf/reorder/ReorderPdfPage';
 
 export const router = createBrowserRouter([
   {
@@ -19,6 +20,7 @@ export const router = createBrowserRouter([
       { path: '/pdf-to-jpg', element: <PdfToJpgPage /> },
       { path: '/split-pdf', element: <SplitPdfPage /> },
       { path: '/rotate-pdf', element: <RotatePdfPage /> },
+      { path: '/reorder-pdf', element: <ReorderPdfPage /> },
     ],
   },
 ]);

@@ -1,19 +1,12 @@
-// src/features/pdf/rotate/rotatePdf.ts
 import { PDFDocument, degrees } from 'pdf-lib';
 import { parseRanges } from '../split/splitPdf';
 
 export type RotateOptions = {
-  /** 90 | 180 | 270 (clockwise) */
   angle: 90 | 180 | 270;
-  /** Optional page ranges "1-3, 7, 9-" (1-based). Empty = all pages. */
   ranges?: string;
   onProgress?: (pct: number) => void;
 };
 
-/**
- * Rotate selected pages in-place and return a new PDF Blob.
- * If ranges is empty/undefined → rotate all pages.
- */
 export async function rotatePdf(file: File, opts: RotateOptions): Promise<Blob> {
   const { angle, ranges, onProgress } = opts;
 
@@ -25,7 +18,7 @@ export async function rotatePdf(file: File, opts: RotateOptions): Promise<Blob> 
     ranges && ranges.trim().length > 0
       ? Array.from(parseRanges(ranges, total))
           .sort((a, b) => a - b)
-          .map((n) => n - 1) // to 0-based
+          .map((n) => n - 1)
       : Array.from({ length: total }, (_, i) => i);
 
   if (selected.length === 0) throw new Error('No valid pages selected.');

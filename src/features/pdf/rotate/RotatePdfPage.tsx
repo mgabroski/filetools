@@ -1,4 +1,3 @@
-// src/features/pdf/rotate/RotatePdfPage.tsx
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Card, CardContent, CardHeader } from '../../../components/ui/Card';
 import { SeoHead } from '../../../components/seo/SeoHead';
@@ -9,7 +8,7 @@ import { getDocument, GlobalWorkerOptions } from 'pdfjs-dist';
 import workerSrc from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
 GlobalWorkerOptions.workerSrc = workerSrc;
 
-const MAX_FILE_BYTES = 50 * 1024 * 1024; // 50MB
+const MAX_FILE_BYTES = 50 * 1024 * 1024;
 const MAX_PAGES = 400;
 
 function formatMB10(bytes: number) {
@@ -29,7 +28,7 @@ export default function RotatePdfPage() {
 
   const [angle, setAngle] = useState<Angle>(90);
   const [scope, setScope] = useState<Scope>('all');
-  const [ranges, setRanges] = useState<string>('1-'); // used when scope === 'range'
+  const [ranges, setRanges] = useState<string>('1-');
 
   const [busy, setBusy] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -43,7 +42,6 @@ export default function RotatePdfPage() {
     !busy &&
     (scope === 'all' || (ranges.trim().length > 0 && parseRanges(ranges, pages).size > 0));
 
-  // Global DnD guard
   useEffect(() => {
     const onDragOver = (e: DragEvent) => {
       if (e.dataTransfer?.types?.includes('Files')) e.preventDefault();
@@ -63,7 +61,6 @@ export default function RotatePdfPage() {
     };
   }, []);
 
-  // Load meta + small thumbnail
   useEffect(() => {
     let cancelled = false;
     (async () => {
@@ -125,7 +122,6 @@ export default function RotatePdfPage() {
     e.currentTarget.value = '';
   }
 
-  // Smooth progress
   function startSmoothProgress() {
     stopSmoothProgress();
     timerRef.current = window.setInterval(() => {
