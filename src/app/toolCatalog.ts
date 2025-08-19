@@ -12,6 +12,7 @@ import {
   Wand2,
   FileCog,
   Scissors,
+  RotateCw,
 } from 'lucide-react';
 
 export type ToolItem = {
@@ -72,6 +73,15 @@ export const TOOL_GROUPS: Record<'pdf' | 'image' | 'media', ToolGroup> = {
         icon: Scissors,
         implemented: true,
         to: '/split-pdf',
+      },
+      {
+        key: 'rotate-pdf',
+        title: 'Rotate PDF',
+        desc: 'Rotate all or selected pages by 90°, 180°, or 270°.',
+        pill: '',
+        icon: RotateCw,
+        implemented: true,
+        to: '/rotate-pdf',
       },
     ],
   },
