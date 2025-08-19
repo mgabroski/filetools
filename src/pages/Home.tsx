@@ -1,5 +1,4 @@
-// src/pages/Home.tsx
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { TOOL_GROUPS } from '../app/toolCatalog';
@@ -9,57 +8,84 @@ import { SeoHead } from '../components/seo/SeoHead';
 
 const ADS_ENABLED = import.meta.env.VITE_ADS_ENABLED === 'true';
 const SITE_URL = (import.meta.env.VITE_SITE_URL as string) || 'https://filetools-eight.vercel.app';
+const INITIAL_VISIBLE = 6;
 
-// Compact, two-row card with fixed heights so everything aligns
 const ToolCard = ({ item }: { item: ToolItem }) => {
   const Icon = item.icon;
+  const isComing = !item.implemented;
+
+  const body = (
+    <>
+      <CardHeader className="flex items-start gap-2 h-24 py-3">
+        <div className="p-1.5 rounded-lg bg-zinc-50 border border-zinc-100 shrink-0">
+          <Icon className="size-4" />
+        </div>
+        <div className="flex-1">
+          <div className="font-semibold leading-tight text-[15px]">{item.title}</div>
+          <p className="text-[13px] text-zinc-500 leading-snug max-h-[36px] overflow-hidden">
+            {item.desc}
+          </p>
+        </div>
+      </CardHeader>
+
+      <CardContent className="flex-1 py-3">
+        <div className="h-20 border border-dashed border-zinc-300 rounded-lg p-3 grid place-items-center">
+          {isComing ? (
+            <button
+              disabled
+              className="px-3 py-1.5 rounded-md bg-zinc-200 text-zinc-600 text-[13px] cursor-not-allowed"
+              aria-disabled
+            >
+              Coming soon
+            </button>
+          ) : (
+            <Link
+              to={item.to}
+              className="inline-block px-3 py-1.5 rounded-md bg-black text-white text-[13px]"
+              aria-label={`Open ${item.title} tool`}
+            >
+              {item.title}
+            </Link>
+          )}
+        </div>
+      </CardContent>
+    </>
+  );
+
+  const card = (
+    <Card className="h-full flex flex-col hover:shadow-md transition-shadow">{body}</Card>
+  );
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2 }}
     >
-      <Card className="h-full flex flex-col hover:shadow-md transition-shadow">
-        {/* Header (taller than button area, compact spacing) */}
-        <CardHeader className="flex items-start gap-2 h-24 py-3">
-          <div className="p-1.5 rounded-lg bg-zinc-50 border border-zinc-100 shrink-0">
-            <Icon className="size-4" />
-          </div>
-          <div className="flex-1">
-            <div className="font-semibold leading-tight text-[15px]">{item.title}</div>
-            {/* clamp to ~2 lines without plugin */}
-            <p className="text-[13px] text-zinc-500 leading-snug max-h-[36px] overflow-hidden">
-              {item.desc}
-            </p>
-          </div>
-        </CardHeader>
-
-        {/* Button area (smaller, fixed height) */}
-        <CardContent className="flex-1 py-3">
-          <div className="h-20 border border-dashed border-zinc-300 rounded-lg p-3 grid place-items-center">
-            {item.implemented ? (
-              <Link
-                to={item.to}
-                className="inline-block px-3 py-1.5 rounded-md bg-black text-white text-[13px]"
-                aria-label={`Open ${item.title} tool`}
-              >
-                {item.title}
-              </Link>
-            ) : (
-              <button
-                disabled
-                className="px-3 py-1.5 rounded-md bg-zinc-200 text-zinc-600 text-[13px] cursor-not-allowed"
-                aria-disabled
-              >
-                Coming soon
-              </button>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+      {isComing ? (
+        card
+      ) : (
+        <Link to={item.to} className="block h-full">
+          {card}
+        </Link>
+      )}
     </motion.div>
   );
 };
+
+function ShowToggleButton({ expanded, onToggle }: { expanded: boolean; onToggle: () => void }) {
+  return (
+    <div className="mt-3 min-h-[48px] flex justify-center">
+      <button
+        onClick={onToggle}
+        className="px-6 py-2 rounded-lg border border-zinc-300 bg-white hover:bg-zinc-50 text-sm font-medium shadow-sm w-[240px] sm:w-[280px]"
+        aria-label={expanded ? 'Show less' : 'Show more'}
+      >
+        {expanded ? 'Show less' : 'Show more'}
+      </button>
+    </div>
+  );
+}
 
 const Section = ({
   id,
@@ -117,9 +143,14 @@ export default function Home() {
     },
   ];
 
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({
+    pdf: false,
+    image: false,
+    media: false,
+  });
+
   return (
     <>
-      {/* SEO head */}
       <SeoHead
         title="Free Online PDF, Image & Video Tools — Fast, Private, No Sign-Up | FileTools"
         description="Merge, compress, convert and resize files in your browser. 100% private, no uploads required, mobile-friendly and free to use."
@@ -156,15 +187,28 @@ export default function Home() {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mt-6">
         {/* Main content */}
         <div className="lg:col-span-3 space-y-8">
-          {Object.entries(TOOL_GROUPS).map(([key, group]) => (
-            <Section key={key} id={key} meta={group}>
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-                {group.items.map((it) => (
-                  <ToolCard key={it.key} item={it} />
-                ))}
-              </div>
-            </Section>
-          ))}
+          {Object.entries(TOOL_GROUPS).map(([key, group]) => {
+            const showAll = expanded[key];
+            const visible = showAll ? group.items : group.items.slice(0, INITIAL_VISIBLE);
+            const hasMore = group.items.length > INITIAL_VISIBLE;
+
+            return (
+              <Section key={key} id={key} meta={group}>
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+                  {visible.map((it) => (
+                    <ToolCard key={it.key} item={it} />
+                  ))}
+                </div>
+
+                {hasMore && (
+                  <ShowToggleButton
+                    expanded={showAll}
+                    onToggle={() => setExpanded((prev) => ({ ...prev, [key]: !prev[key] }))}
+                  />
+                )}
+              </Section>
+            );
+          })}
         </div>
 
         {/* Sidebar (ads hidden unless enabled) */}
