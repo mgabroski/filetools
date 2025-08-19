@@ -4,7 +4,7 @@ import App from '../App';
 import Home from '../pages/Home';
 import MergePdfPage from '../features/pdf/merge/MergePdfPage';
 import CompressPdfPage from '../features/pdf/compress/CompressPdfPage';
-import JpgToPdfPage from '../features/pdf/jpg-to-pdf/JpgToPdfPage';
+import PdfToJpgPage from '../features/pdf/pdf-to-jpg/PdfToJpgPage';
 
 export const router = createBrowserRouter([
   {
@@ -14,7 +14,7 @@ export const router = createBrowserRouter([
       { index: true, element: <Home /> },
       { path: 'merge-pdf', element: <MergePdfPage /> },
       { path: 'compress-pdf', element: <CompressPdfPage /> },
-      { path: 'jpg-to-pdf', element: <JpgToPdfPage /> },
+      { path: '/pdf-to-jpg', element: <PdfToJpgPage /> },
     ],
   },
 ]);
