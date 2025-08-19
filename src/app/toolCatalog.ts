@@ -1,4 +1,3 @@
-// src/app/toolCatalog.ts
 import {
   FileText,
   Image as ImageIcon,
@@ -14,6 +13,9 @@ import {
   Scissors,
   RotateCw,
   ListOrdered,
+  Hash,
+  Stamp,
+  PenTool,
 } from 'lucide-react';
 
 export type ToolItem = {
@@ -29,7 +31,7 @@ export type ToolItem = {
 export type ToolGroup = {
   label: string;
   icon: React.ComponentType<{ className?: string }>;
-  color: string; // tailwind gradient classes
+  color: string;
   items: ToolItem[];
 };
 
@@ -92,6 +94,33 @@ export const TOOL_GROUPS: Record<'pdf' | 'image' | 'media', ToolGroup> = {
         icon: ListOrdered,
         implemented: true,
         to: '/reorder-pdf',
+      },
+      {
+        key: 'page-numbers',
+        title: 'Add Page Numbers',
+        desc: 'Number pages (position & style).',
+        pill: 'Coming soon',
+        icon: Hash,
+        to: '/add-page-numbers',
+        implemented: false,
+      },
+      {
+        key: 'watermark-pdf',
+        title: 'Add Watermark',
+        desc: 'Text or image watermark on pages.',
+        pill: 'Coming soon',
+        icon: Stamp,
+        to: '/add-watermark',
+        implemented: false,
+      },
+      {
+        key: 'sign-pdf',
+        title: 'Sign PDF',
+        desc: 'Add signatures — draw, type or upload. Private & secure.',
+        pill: 'Coming soon',
+        icon: PenTool,
+        to: '#',
+        implemented: false,
       },
     ],
   },
