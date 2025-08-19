@@ -39,7 +39,7 @@ export const TOOL_GROUPS: Record<'pdf' | 'image' | 'media', ToolGroup> = {
       {
         key: 'merge-pdf',
         title: 'Merge PDF',
-        desc: 'Combine up to 20 PDFs.',
+        desc: 'Combine PDFs into one file. Drag & drop & reorder. Private.',
         pill: 'Client-side',
         icon: Layers,
         to: '/merge-pdf',
@@ -48,7 +48,7 @@ export const TOOL_GROUPS: Record<'pdf' | 'image' | 'media', ToolGroup> = {
       {
         key: 'compress-pdf',
         title: 'Compress PDF',
-        desc: 'Reduce size with quality slider.',
+        desc: 'Reduce PDF size online. Quality & DPI controls. Private.',
         pill: 'Lossy/Lossless',
         icon: Shrink,
         to: '/compress-pdf',

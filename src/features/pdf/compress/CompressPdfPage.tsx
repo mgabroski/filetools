@@ -1,15 +1,19 @@
+// src/features/pdf/compress/CompressPdfPage.tsx
 import { useEffect, useMemo, useState } from 'react';
 import { Card, CardContent, CardHeader } from '../../../components/ui/Card';
 import { downloadBlob } from '../../../utils/download';
 import { compressPdf, type CompressOptions } from './compressPdf';
 import { getDocument, GlobalWorkerOptions } from 'pdfjs-dist';
 import workerSrc from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
+import { SeoHead } from '../../../components/seo/SeoHead';
 
 GlobalWorkerOptions.workerSrc = workerSrc;
 
 const MAX_FILE_BYTES = 50 * 1024 * 1024;
 const MAX_PAGES = 200;
+const SITE_URL = import.meta.env.VITE_SITE_URL || 'https://filetools-eight.vercel.app';
 
+// Display “MB” using base-10 (to match what users see in Finder/Windows)
 function formatMB10(bytes: number) {
   return (bytes / 1_000_000).toFixed(2);
 }
@@ -40,6 +44,7 @@ export default function CompressPdfPage() {
   const canCompress = !!file && !!meta && !busy;
   const locked = preset !== 'custom';
 
+  // Global DnD guard + add first file on drop
   useEffect(() => {
     const onDragOver = (e: DragEvent) => {
       if (e.dataTransfer?.types?.includes('Files')) e.preventDefault();
@@ -59,6 +64,7 @@ export default function CompressPdfPage() {
     };
   }, []);
 
+  // Load meta + small first-page preview
   useEffect(() => {
     let cancelled = false;
     (async () => {
@@ -93,7 +99,7 @@ export default function CompressPdfPage() {
           const url = canvas.toDataURL('image/png');
           if (!cancelled) setThumbUrl(url);
         } catch {
-          /* ignore preview failure */
+          /* preview is optional */
         }
       } catch (e) {
         console.error(e);
@@ -105,6 +111,7 @@ export default function CompressPdfPage() {
     };
   }, [file]);
 
+  // Presets -> DPI/quality
   useEffect(() => {
     setActualMB(null);
     if (preset === 'email') {
@@ -119,6 +126,7 @@ export default function CompressPdfPage() {
     }
   }, [preset]);
 
+  // Lightweight output estimate by sampling a few pages
   useEffect(() => {
     let cancelled = false;
     (async () => {
@@ -133,14 +141,12 @@ export default function CompressPdfPage() {
         const samples = Array.from(new Set([1, Math.max(1, Math.ceil(total / 2)), total])).sort(
           (a, b) => a - b
         );
-
         const bytes: number[] = [];
 
         for (const idx of samples) {
           const page = await pdf.getPage(idx);
           const scale = dpi / 96;
           const viewport = page.getViewport({ scale });
-
           const canvas = document.createElement('canvas');
           canvas.width = Math.ceil(viewport.width);
           canvas.height = Math.ceil(viewport.height);
@@ -153,16 +159,14 @@ export default function CompressPdfPage() {
           const b = Math.ceil((dataUrl.length * 3) / 4);
           bytes.push(b);
 
-          // free memory
           ctx.clearRect(0, 0, canvas.width, canvas.height);
           canvas.width = canvas.height = 0;
-
           if (cancelled) return;
         }
 
         if (!bytes.length) return;
         const avg = bytes.reduce((a, b) => a + b, 0) / bytes.length;
-        const estMB = (avg * total) / 1_000_000;
+        const estMB = (avg * total) / 1_000_000; // base-10 MB
         if (!cancelled) setEstimateMB(estMB.toFixed(2));
       } catch (e) {
         console.warn('estimate failed', e);
@@ -240,6 +244,33 @@ export default function CompressPdfPage() {
 
   return (
     <div className="space-y-6">
+      {/* SEO head */}
+      <SeoHead
+        title="Compress PDF Online — Reduce PDF File Size (Free & Private) | FileTools"
+        description="Compress PDF online in seconds. Reduce PDF file size with quality & DPI controls. Free, fast, and private — processing happens in your browser."
+        path="/compress-pdf"
+        image="/og/og-compress-pdf.png"
+        type="website"
+        keywords="compress pdf online, reduce pdf size, shrink pdf, pdf compressor, compress pdf free, optimize pdf, reduce pdf file size online"
+        jsonLd={[
+          {
+            '@context': 'https://schema.org',
+            '@type': 'WebPage',
+            name: 'Compress PDF Online',
+            url: `${SITE_URL}/compress-pdf`,
+            inLanguage: 'en',
+          },
+          {
+            '@context': 'https://schema.org',
+            '@type': 'SoftwareApplication',
+            name: 'FileTools — PDF Compressor',
+            applicationCategory: 'UtilitiesApplication',
+            operatingSystem: 'Web',
+            offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+          },
+        ]}
+      />
+
       {/* Loading overlay */}
       {busy && (
         <div className="fixed inset-0 z-30 bg-black/50 grid place-items-center">
@@ -259,8 +290,9 @@ export default function CompressPdfPage() {
 
       <h1 className="text-2xl font-bold">Compress PDF</h1>
       <p className="text-sm text-zinc-600">
-        Convert each PDF page to a JPEG image at your chosen DPI and quality — great for scans and
-        photos.
+        Reduce PDF file size online — free &amp; private. Choose a preset (Email, Standard, High) or
+        use Custom to set quality and DPI. Private by design — all processing happens in your
+        browser. Your files never leave your device.
       </p>
 
       <Card>
@@ -300,7 +332,7 @@ export default function CompressPdfPage() {
               role="button"
               tabIndex={0}
             >
-              Drag & drop a PDF here, or click <span className="underline">Choose PDF</span>.
+              Drag &amp; drop a PDF here, or click <span className="underline">Choose PDF</span>.
               <div className="mt-2 text-xs text-zinc-500">
                 Limits: ≤ {formatMB10(MAX_FILE_BYTES)} MB • ≤ {MAX_PAGES} pages
               </div>
