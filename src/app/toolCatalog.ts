@@ -55,23 +55,14 @@ export const TOOL_GROUPS: Record<'pdf' | 'image' | 'media', ToolGroup> = {
         implemented: true,
       },
       {
-        key: 'jpg-to-pdf',
-        title: 'JPG → PDF',
-        desc: 'Convert images to a single PDF.',
-        pill: 'Batch',
-        icon: FileImage,
-        to: '/jpg-to-pdf',
-        implemented: true,
-      },
-      {
         key: 'pdf-to-jpg',
         title: 'PDF → JPG',
         desc: 'Export pages as images.',
-        pill: 'Per-page',
+        pill: '',
         icon: FileDown,
+        implemented: true,
         to: '/pdf-to-jpg',
-        implemented: false,
-      }, // later
+      },
     ],
   },
   image: {
@@ -79,6 +70,15 @@ export const TOOL_GROUPS: Record<'pdf' | 'image' | 'media', ToolGroup> = {
     icon: ImageIcon,
     color: 'from-sky-500 to-cyan-500',
     items: [
+      {
+        key: 'jpg-to-pdf',
+        title: 'JPG → PDF',
+        desc: 'Convert images to a single PDF.',
+        pill: 'Batch',
+        icon: FileImage,
+        to: '/jpg-to-pdf',
+        implemented: false,
+      },
       {
         key: 'img-convert',
         title: 'JPG ↔ PNG ↔ WebP',
