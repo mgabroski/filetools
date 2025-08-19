@@ -11,6 +11,7 @@ import {
   Gauge,
   Wand2,
   FileCog,
+  Scissors,
 } from 'lucide-react';
 
 export type ToolItem = {
@@ -62,6 +63,15 @@ export const TOOL_GROUPS: Record<'pdf' | 'image' | 'media', ToolGroup> = {
         icon: FileDown,
         implemented: true,
         to: '/pdf-to-jpg',
+      },
+      {
+        key: 'split-pdf',
+        title: 'Split PDF',
+        desc: 'Extract selected pages by range.',
+        pill: '',
+        icon: Scissors,
+        implemented: true,
+        to: '/split-pdf',
       },
     ],
   },
