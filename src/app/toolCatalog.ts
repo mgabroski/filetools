@@ -16,6 +16,7 @@ import {
   Hash,
   Stamp,
   PenTool,
+  CropIcon,
 } from 'lucide-react';
 
 export type ToolItem = {
@@ -129,6 +130,15 @@ export const TOOL_GROUPS: Record<'pdf' | 'image' | 'media', ToolGroup> = {
     icon: ImageIcon,
     color: 'from-sky-500 to-cyan-500',
     items: [
+      {
+        key: 'crop-resize',
+        title: 'Crop & Resize',
+        desc: 'Crop with aspect ratios, set output size & format.',
+        pill: 'Client-side',
+        icon: CropIcon,
+        to: '/crop-resize',
+        implemented: true,
+      },
       {
         key: 'jpg-to-pdf',
         title: 'JPG → PDF',
