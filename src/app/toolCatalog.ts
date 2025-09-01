@@ -140,6 +140,15 @@ export const TOOL_GROUPS: Record<'pdf' | 'image' | 'media', ToolGroup> = {
         implemented: true,
       },
       {
+        key: 'bg-remove',
+        title: 'Remove Background',
+        desc: 'Make background transparent (Auto or Magic Wand).',
+        pill: 'PNG',
+        icon: Wand2,
+        to: '/bg-remove',
+        implemented: true,
+      },
+      {
         key: 'jpg-to-pdf',
         title: 'JPG → PDF',
         desc: 'Convert images to a single PDF.',
