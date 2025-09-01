@@ -39,13 +39,13 @@ const ToolCard = ({ item }: { item: ToolItem }) => {
               Coming soon
             </button>
           ) : (
-            <Link
-              to={item.to}
+            // NOTE: span instead of Link to avoid nested <a>
+            <span
               className="inline-block px-3 py-1.5 rounded-md bg-black text-white text-[13px]"
               aria-label={`Open ${item.title} tool`}
             >
               {item.title}
-            </Link>
+            </span>
           )}
         </div>
       </CardContent>
@@ -65,7 +65,7 @@ const ToolCard = ({ item }: { item: ToolItem }) => {
       {isComing ? (
         card
       ) : (
-        <Link to={item.to} className="block h-full">
+        <Link to={item.to} className="block h-full" aria-label={`Open ${item.title} tool`}>
           {card}
         </Link>
       )}
