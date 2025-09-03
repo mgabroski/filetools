@@ -17,6 +17,7 @@ import {
   Stamp,
   PenTool,
   CropIcon,
+  LayoutGrid,
 } from 'lucide-react';
 
 export type ToolItem = {
@@ -158,13 +159,13 @@ export const TOOL_GROUPS: Record<'pdf' | 'image' | 'media', ToolGroup> = {
         implemented: true,
       },
       {
-        key: 'img-convert',
-        title: 'JPG ↔ PNG ↔ WebP',
-        desc: 'Fast format switching.',
-        pill: 'WASM',
-        icon: ArrowLeftRight,
-        to: '/img-convert',
-        implemented: false,
+        key: 'collage',
+        title: 'Collage Maker',
+        desc: 'Arrange photos into grid layouts.',
+        pill: 'Private',
+        icon: LayoutGrid,
+        to: '/collage',
+        implemented: true,
       },
       {
         key: 'img-compress',
