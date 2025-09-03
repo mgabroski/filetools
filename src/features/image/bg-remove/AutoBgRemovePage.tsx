@@ -32,26 +32,50 @@ export default function AutoBgRemovePage() {
 
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const addFile = useCallback((f: File) => {
-    if (!/^image\/(png|jpe?g|webp)$/i.test(f.type)) {
-      alert('Please choose a JPG, PNG, or WebP image.');
+  const runAuto = useCallback(async (file: File) => {
+    setBusy(true);
+    setProgress(0);
+    setPhase('Starting…');
+    try {
+      const { url } = await removeBgAuto(file, (pct, label) => {
+        setProgress(pct);
+        if (label) setPhase(label);
+      });
+      setPhase('Complete');
+      setView((v) => ({ ...v, resultUrl: url }));
+    } catch (e) {
+      console.error(e);
+      alert('Background removal failed. Try another image.');
+      resetAll();
       return;
+    } finally {
+      setBusy(false);
     }
-    if (f.size > MAX_FILE_BYTES) {
-      alert('File is too large. Max 25 MB.');
-      return;
-    }
-
-    // Revoke any existing URLs using functional update to avoid stale state
-    setView((prev) => {
-      if (prev.originalUrl) URL.revokeObjectURL(prev.originalUrl);
-      if (prev.resultUrl) URL.revokeObjectURL(prev.resultUrl);
-      return { originalUrl: URL.createObjectURL(f), resultUrl: null, file: f };
-    });
-
-    // auto start after selection
-    setTimeout(() => void runAuto(f), 0);
   }, []);
+
+  const addFile = useCallback(
+    (f: File) => {
+      if (!/^image\/(png|jpe?g|webp)$/i.test(f.type)) {
+        alert('Please choose a JPG, PNG, or WebP image.');
+        return;
+      }
+      if (f.size > MAX_FILE_BYTES) {
+        alert('File is too large. Max 25 MB.');
+        return;
+      }
+
+      // Revoke any existing URLs using functional update to avoid stale state
+      setView((prev) => {
+        if (prev.originalUrl) URL.revokeObjectURL(prev.originalUrl);
+        if (prev.resultUrl) URL.revokeObjectURL(prev.resultUrl);
+        return { originalUrl: URL.createObjectURL(f), resultUrl: null, file: f };
+      });
+
+      // auto start after selection
+      setTimeout(() => void runAuto(f), 0);
+    },
+    [runAuto]
+  );
 
   useEffect(() => {
     const onDragOver = (e: DragEvent) => {
@@ -71,27 +95,6 @@ export default function AutoBgRemovePage() {
       window.removeEventListener('drop', onDrop);
     };
   }, [addFile]);
-
-  async function runAuto(file: File) {
-    setBusy(true);
-    setProgress(0);
-    setPhase('Starting…');
-    try {
-      const { url } = await removeBgAuto(file, (pct, label) => {
-        setProgress(pct);
-        if (label) setPhase(label);
-      });
-      setPhase('Complete');
-      setView((v) => ({ ...v, resultUrl: url }));
-    } catch (e) {
-      console.error(e);
-      alert('Background removal failed. Try another image.');
-      resetAll();
-      return;
-    } finally {
-      setBusy(false);
-    }
-  }
 
   function onPick(e: React.ChangeEvent<HTMLInputElement>) {
     const f = e.target.files?.[0];

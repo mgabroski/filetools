@@ -155,7 +155,7 @@ export const TOOL_GROUPS: Record<'pdf' | 'image' | 'media', ToolGroup> = {
         pill: 'Batch',
         icon: FileImage,
         to: '/jpg-to-pdf',
-        implemented: false,
+        implemented: true,
       },
       {
         key: 'img-convert',
