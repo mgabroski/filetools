@@ -10,6 +10,7 @@ import RotatePdfPage from '../features/pdf/rotate/RotatePdfPage';
 import ReorderPdfPage from '../features/pdf/reorder/ReorderPdfPage';
 import CropResizePage from '../features/image/crop-resize/CropResizePage';
 import AutoBgRemovePage from '../features/image/bg-remove/AutoBgRemovePage';
+import JpgToPdfPage from '../features/image/jpg-to-pdf/JpgToPdfPage';
 
 export const router = createBrowserRouter([
   {
@@ -28,6 +29,7 @@ export const router = createBrowserRouter([
       //Image Tools
       { path: '/crop-resize', element: <CropResizePage /> },
       { path: '/bg-remove', element: <AutoBgRemovePage /> },
+      { path: '/jpg-to-pdf', element: <JpgToPdfPage /> },
     ],
   },
 ]);
