@@ -11,6 +11,7 @@ import ReorderPdfPage from '../features/pdf/reorder/ReorderPdfPage';
 import CropResizePage from '../features/image/crop-resize/CropResizePage';
 import AutoBgRemovePage from '../features/image/bg-remove/AutoBgRemovePage';
 import JpgToPdfPage from '../features/image/jpg-to-pdf/JpgToPdfPage';
+import ImageCompressorPage from '../features/image/compress/ImageCompressorPage';
 
 export const router = createBrowserRouter([
   {
@@ -30,6 +31,7 @@ export const router = createBrowserRouter([
       { path: '/crop-resize', element: <CropResizePage /> },
       { path: '/bg-remove', element: <AutoBgRemovePage /> },
       { path: '/jpg-to-pdf', element: <JpgToPdfPage /> },
+      { path: '/compress-image', element: <ImageCompressorPage /> },
     ],
   },
 ]);
