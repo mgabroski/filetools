@@ -13,6 +13,7 @@ import AutoBgRemovePage from '../features/image/bg-remove/AutoBgRemovePage';
 import JpgToPdfPage from '../features/image/jpg-to-pdf/JpgToPdfPage';
 import ImageCompressorPage from '../features/image/compress/ImageCompressorPage';
 import CollageMakerPage from '../features/image/collage/CollageMakerPage';
+import AnnotatePage from '../features/image/annotate/AnnotatePage';
 
 export const router = createBrowserRouter([
   {
@@ -34,6 +35,7 @@ export const router = createBrowserRouter([
       { path: '/jpg-to-pdf', element: <JpgToPdfPage /> },
       { path: '/compress-image', element: <ImageCompressorPage /> },
       { path: '/collage', element: <CollageMakerPage /> },
+      { path: '/annotate', element: <AnnotatePage /> },
     ],
   },
 ]);

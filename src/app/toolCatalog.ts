@@ -18,6 +18,8 @@ import {
   PenTool,
   CropIcon,
   LayoutGrid,
+  ImageDown,
+  EyeOff,
 } from 'lucide-react';
 
 export type ToolItem = {
@@ -177,12 +179,41 @@ export const TOOL_GROUPS: Record<'pdf' | 'image' | 'media', ToolGroup> = {
         implemented: true,
       },
       {
-        key: 'img-resize',
-        title: 'Resize Images',
-        desc: 'Scale, fit, crop.',
-        pill: 'Presets',
-        icon: Wand2,
-        to: '/img-resize',
+        key: 'img-annotate',
+        title: 'Annotate Image',
+        desc: 'Arrows, boxes, text & highlights.',
+        pill: 'Canvas',
+        icon: PenTool,
+        to: '/annotate',
+        implemented: true,
+      },
+      {
+        key: 'heic-to-jpg',
+        title: 'HEIC → JPG',
+        desc: 'Convert iPhone photos to JPG. Fast & private — no uploads.',
+        pill: 'Coming soon',
+        icon: ImageDown,
+        to: '#',
+        implemented: false,
+      },
+
+      {
+        key: 'redact',
+        title: 'Blur / Redact',
+        desc: 'Hide sensitive info — blur or pixelate areas in seconds.',
+        pill: 'Coming soon',
+        icon: EyeOff,
+        to: '#',
+        implemented: false,
+      },
+
+      {
+        key: 'watermark',
+        title: 'Add Watermark',
+        desc: 'Overlay text or a logo with size, position & opacity controls.',
+        pill: 'Coming soon',
+        icon: Stamp,
+        to: '#',
         implemented: false,
       },
     ],
