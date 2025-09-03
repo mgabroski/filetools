@@ -172,8 +172,8 @@ export const TOOL_GROUPS: Record<'pdf' | 'image' | 'media', ToolGroup> = {
         desc: 'Target size or quality.',
         pill: 'Batch',
         icon: Gauge,
-        to: '/img-compress',
-        implemented: false,
+        to: '/compress-image',
+        implemented: true,
       },
       {
         key: 'img-resize',
