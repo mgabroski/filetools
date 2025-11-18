@@ -10,30 +10,58 @@ const ADS_ENABLED = import.meta.env.VITE_ADS_ENABLED === 'true';
 const SITE_URL = (import.meta.env.VITE_SITE_URL as string) || 'https://filetools-eight.vercel.app';
 const INITIAL_VISIBLE = 6;
 
-const ToolCard = ({ item }: { item: ToolItem }) => {
+/* ---------------------------------------------
+   MOST USED TOOLS (6 конкретни алатки по TITLE)
+----------------------------------------------*/
+const POPULAR_KEYS: string[] = [
+  'compress-pdf', // Compress PDF
+  'merge-pdf',    // Merge PDF
+  'img-compress', // Image Compressor (JPG/PNG)
+  'bg-remove',    // Remove Background
+  'jpg-to-pdf',   // JPG → PDF
+  'mp4-compress', // Compress MP4
+];
+
+const ALL_TOOLS: ToolItem[] = Object.values(TOOL_GROUPS).flatMap((group) => group.items);
+
+const POPULAR_TOOLS: ToolItem[] = POPULAR_KEYS
+  .map((key) => ALL_TOOLS.find((item) => item.key === key))
+  .filter(Boolean) as ToolItem[];
+
+/* ------------------------------------------*/
+
+const ToolCard = ({ item, color }: { item: ToolItem; color?: string }) => {
   const Icon = item.icon;
   const isComing = !item.implemented;
 
   const body = (
     <>
-      <CardHeader className="flex items-start gap-2 h-24 py-3">
-        <div className="p-1.5 rounded-lg bg-zinc-50 border border-zinc-100 shrink-0">
+      <CardHeader className="flex items-start gap-3 pb-3 pt-4">
+        <div
+          className={
+            color
+              ? `p-2 rounded-xl shrink-0 bg-gradient-to-br ${color} text-white`
+              : 'p-2 rounded-xl bg-zinc-50 border border-zinc-200 text-zinc-700 shrink-0'
+          }
+        >
           <Icon className="size-4" />
         </div>
-        <div className="flex-1">
-          <div className="font-semibold leading-tight text-[15px]">{item.title}</div>
-          <p className="text-[13px] text-zinc-500 leading-snug max-h-[36px] overflow-hidden">
+        <div className="flex-1 space-y-1">
+          <div className="font-semibold leading-tight text-[15px] text-zinc-900">
+            {item.title}
+          </div>
+          <p className="text-[13px] text-zinc-500 leading-snug line-clamp-2">
             {item.desc}
           </p>
         </div>
       </CardHeader>
 
-      <CardContent className="flex-1 py-3">
-        <div className="h-20 border border-dashed border-zinc-300 rounded-lg p-3 grid place-items-center">
+      <CardContent className="flex-1 pb-4 pt-2">
+        <div className="h-20 rounded-lg border border-dashed border-zinc-200 bg-zinc-50/60 grid place-items-center">
           {isComing ? (
             <button
               disabled
-              className="px-3 py-1.5 rounded-md bg-zinc-200 text-zinc-600 text-[13px] cursor-not-allowed"
+              className="px-3 py-1.5 rounded-md bg-zinc-200/80 text-zinc-600 text-[13px] cursor-not-allowed"
               aria-disabled
             >
               Coming soon
@@ -41,7 +69,7 @@ const ToolCard = ({ item }: { item: ToolItem }) => {
           ) : (
             // NOTE: span instead of Link to avoid nested <a>
             <span
-              className="inline-block px-3 py-1.5 rounded-md bg-black text-white text-[13px]"
+              className="inline-flex items-center justify-center px-3 py-1.5 rounded-md bg-indigo-600 text-white text-[13px] font-medium hover:bg-indigo-700 transition-colors"
               aria-label={`Open ${item.title} tool`}
             >
               {item.title}
@@ -53,7 +81,9 @@ const ToolCard = ({ item }: { item: ToolItem }) => {
   );
 
   const card = (
-    <Card className="h-full flex flex-col hover:shadow-md transition-shadow">{body}</Card>
+    <Card className="h-full flex flex-col rounded-2xl border border-zinc-200 bg-white transition-colors">
+      {body}
+    </Card>
   );
 
   return (
@@ -78,7 +108,7 @@ function ShowToggleButton({ expanded, onToggle }: { expanded: boolean; onToggle:
     <div className="mt-3 min-h-[48px] flex justify-center">
       <button
         onClick={onToggle}
-        className="px-6 py-2 rounded-lg border border-zinc-300 bg-white hover:bg-zinc-50 text-sm font-medium shadow-sm w-[240px] sm:w-[280px]"
+        className="px-6 py-2 rounded-lg border border-zinc-200 bg-white hover:bg-zinc-50 text-sm font-medium text-zinc-700 w-[240px] sm:w-[260px] transition-colors"
         aria-label={expanded ? 'Show less' : 'Show more'}
       >
         {expanded ? 'Show less' : 'Show more'}
@@ -96,14 +126,16 @@ const Section = ({
   meta: ToolGroup;
   children: React.ReactNode;
 }) => (
-  <section id={id} className="mb-8 scroll-mt-24">
-    <div className="flex items-center gap-2 mb-3">
+  <section id={id} className="pt-8 mb-10 scroll-mt-24">
+    <div className="flex items-center gap-3 mb-4">
       <div
-        className={`size-8 grid place-items-center rounded-xl bg-gradient-to-br ${meta.color} text-white`}
+        className={`size-9 grid place-items-center rounded-2xl bg-gradient-to-br ${meta.color} text-white`}
       >
         {React.createElement(meta.icon, { className: 'size-4' })}
       </div>
-      <h2 className="text-xl font-semibold">{meta.label}</h2>
+      <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold text-zinc-900 leading-none">
+        {meta.label}
+      </h2>
     </div>
     {children}
   </section>
@@ -160,33 +192,65 @@ export default function Home() {
       />
 
       {/* Hero */}
-      <motion.div
+      <motion.section
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="text-center"
+        className="text-center max-w-3xl mx-auto mb-6"
       >
-        <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight mb-3">
+        <h1 className="text-xl sm:text-3xl md:text-4xl font-semibold tracking-tight mb-4 text-zinc-900">
           Free Online PDF, Image &amp; Video Tools
         </h1>
-        <p className="text-zinc-600 max-w-2xl mx-auto">
+        <p className="text-zinc-600 max-w-2xl mx-auto text-sm sm:text-base">
           Fast, free file utilities to merge, compress, convert, resize and more.{' '}
-          <span className="font-medium">
-            Private by design — all processing happens in your browser. Your files never leave your
+          <span className="font-medium text-zinc-700">
+            Private by design — processing happens in your browser. Your files never leave your
             device.
           </span>
         </p>
-        <div className="mt-5 flex flex-wrap items-center justify-center gap-2 text-xs text-zinc-600">
-          <span className="px-2 py-1 rounded-full bg-zinc-100">No login</span>
-          <span className="px-2 py-1 rounded-full bg-zinc-100">Drag &amp; drop</span>
-          <span className="px-2 py-1 rounded-full bg-zinc-100">PWA offline</span>
-          <span className="px-2 py-1 rounded-full bg-zinc-100">Private: in-browser</span>
+        <div className="mt-5 flex flex-wrap items-center justify-center gap-2 text-[11px] sm:text-xs text-zinc-600">
+          <span className="px-3 py-1 rounded-full bg-zinc-100 border border-zinc-200">
+            No login
+          </span>
+          <span className="px-3 py-1 rounded-full bg-zinc-100 border border-zinc-200">
+            Drag &amp; drop
+          </span>
+          <span className="px-3 py-1 rounded-full bg-zinc-100 border border-zinc-200">
+            PWA offline
+          </span>
+          <span className="px-3 py-1 rounded-full bg-zinc-100 border border-zinc-200">
+            Private: in-browser
+          </span>
         </div>
-      </motion.div>
+      </motion.section>
+
+      {/* Most used tools */}
+      {POPULAR_TOOLS.length > 0 && (
+        <section className="pt-8 mt-2 mb-8">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <div className="size-8 grid place-items-center rounded-2xl bg-indigo-500/90 text-white text-sm">
+                ★
+              </div>
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold text-zinc-900 leading-none">
+                Most used tools
+              </h2>
+            </div>
+            <p className="hidden sm:block text-xs text-zinc-500">
+              Quick access to the tools people use the most.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+            {POPULAR_TOOLS.map((item) => (
+              <ToolCard key={item.key} item={item} />
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Content grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mt-6">
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,3fr)_minmax(0,1.1fr)] gap-6 mt-4 items-start">
         {/* Main content */}
-        <div className="lg:col-span-3 space-y-8">
+        <div className="space-y-8">
           {Object.entries(TOOL_GROUPS).map(([key, group]) => {
             const showAll = expanded[key];
             const visible = showAll ? group.items : group.items.slice(0, INITIAL_VISIBLE);
@@ -196,14 +260,19 @@ export default function Home() {
               <Section key={key} id={key} meta={group}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
                   {visible.map((it) => (
-                    <ToolCard key={it.key} item={it} />
+                    <ToolCard key={it.key} item={it} color={group.color} />
                   ))}
                 </div>
 
                 {hasMore && (
                   <ShowToggleButton
                     expanded={showAll}
-                    onToggle={() => setExpanded((prev) => ({ ...prev, [key]: !prev[key] }))}
+                    onToggle={() =>
+                      setExpanded((prev) => ({
+                        ...prev,
+                        [key]: !prev[key],
+                      }))
+                    }
                   />
                 )}
               </Section>
@@ -211,21 +280,22 @@ export default function Home() {
           })}
         </div>
 
-        {/* Sidebar (ads hidden unless enabled) */}
-        <div className="space-y-4">
+        {/* Sidebar моментално исклучен */}
+        {/* 
+        <aside className="space-y-4">
           {ADS_ENABLED && (
             <>
-              <div className="rounded-xl border border-zinc-200 bg-zinc-50 text-zinc-500 text-xs grid place-items-center h-28">
+              <div className="rounded-2xl border border-zinc-200 bg-zinc-50 text-zinc-500 text-xs grid place-items-center h-28">
                 Ad placeholder (336×280 / responsive)
               </div>
-              <div className="rounded-xl border border-zinc-200 bg-zinc-50 text-zinc-500 text-xs grid place-items-center h-28">
+              <div className="rounded-2xl border border-zinc-200 bg-zinc-50 text-zinc-500 text-xs grid place-items-center h-28">
                 Ad placeholder (336×280 / responsive)
               </div>
             </>
           )}
-          <Card>
-            <CardHeader>
-              <div className="font-semibold">Why FileTools?</div>
+          <Card className="rounded-2xl border border-zinc-200 bg-white">
+            <CardHeader className="pb-2 pt-4">
+              <div className="font-semibold text-zinc-900 text-sm">Why FileTools?</div>
             </CardHeader>
             <CardContent>
               <ul className="list-disc pl-5 text-sm text-zinc-700 space-y-2">
@@ -235,33 +305,36 @@ export default function Home() {
               </ul>
             </CardContent>
           </Card>
-        </div>
+        </aside>
+        */}
       </div>
 
       {/* FAQ / SEO */}
-      <div className="mt-10">
-        <Card>
-          <CardHeader>
-            <div className="text-lg font-semibold">Frequently Asked Questions</div>
+      <section className="pt-8 mt-10" id="faq">
+        <Card className="rounded-2xl border border-zinc-200 bg-white">
+          <CardHeader className="pb-2 pt-4">
+            <div className="text-xl sm:text-2xl md:text-3xl font-semibold text-zinc-900 leading-none">
+              Frequently Asked Questions
+            </div>
           </CardHeader>
-          <CardContent className="text-sm text-zinc-700 space-y-4">
-            <div>
-              <div className="font-medium">Are my files uploaded?</div>
+          <CardContent className="text-sm text-zinc-700 space-y-5">
+            <div className="space-y-1.5">
+              <div className="font-medium text-zinc-900">Are my files uploaded?</div>
               <p>
                 For most tools, processing happens in your browser using WebAssembly. That means
                 your files never leave your device. Some conversions (like DOCX→PDF) may require a
                 server — those are clearly labeled.
               </p>
             </div>
-            <div>
-              <div className="font-medium">Is it free?</div>
+            <div className="space-y-1.5">
+              <div className="font-medium text-zinc-900">Is it free?</div>
               <p>
                 Yes. Core tools are free and supported by privacy-respecting ads. Heavy/batch tasks
                 may offer an optional Pro mode with higher limits.
               </p>
             </div>
-            <div>
-              <div className="font-medium">Which browsers are supported?</div>
+            <div className="space-y-1.5">
+              <div className="font-medium text-zinc-900">Which browsers are supported?</div>
               <p>
                 Latest Chrome, Edge, Firefox, and Safari on desktop &amp; mobile. No extensions
                 required.
@@ -269,7 +342,7 @@ export default function Home() {
             </div>
           </CardContent>
         </Card>
-      </div>
+      </section>
     </>
   );
 }
