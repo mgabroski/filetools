@@ -1,7 +1,1 @@
 @import 'tailwindcss';
-
-.bg-red {
-    background-color:#3f72e800;
-    border: 2px solid #3F73E8;
-    color: #343434
-}

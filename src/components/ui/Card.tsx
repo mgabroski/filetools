@@ -6,9 +6,7 @@ export function Card({ children, className = '', ...props }: DivProps) {
   return (
     <div
       {...props}
-      className={`rounded-2xl border border-zinc-200 bg-white/80 backdrop-blur-sm 
-hover:border-blue-500 hover:shadow-[0_0_0_3px_rgba(59,130,246,0.15)]
-transition-all duration-300 ${className}`}
+      className={`rounded-2xl shadow-sm border border-zinc-200 bg-white ${className}`}
     >
       {children}
     </div>
