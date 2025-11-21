@@ -207,20 +207,17 @@ export default function Home() {
             device.
           </span>
         </p>
-        <div className="mt-5 flex flex-wrap items-center justify-center gap-2 text-[11px] sm:text-xs text-zinc-600">
-          <span className="px-3 py-1 rounded-full bg-zinc-100 border border-zinc-200">
-            No login
-          </span>
-          <span className="px-3 py-1 rounded-full bg-zinc-100 border border-zinc-200">
-            Drag &amp; drop
-          </span>
-          <span className="px-3 py-1 rounded-full bg-zinc-100 border border-zinc-200">
-            PWA offline
-          </span>
-          <span className="px-3 py-1 rounded-full bg-zinc-100 border border-zinc-200">
-            Private: in-browser
-          </span>
-        </div>
+<div className="mt-5 flex flex-wrap items-center justify-center gap-3 text-[11px] sm:text-xs text-zinc-500">
+  <span>No login</span>
+  <span>•</span>
+  <span>Drag & drop</span>
+  <span>•</span>
+  <span>PWA offline</span>
+  <span>•</span>
+  <span>Private: in-browser</span>
+</div>
+
+
       </motion.section>
 
       {/* Most used tools */}

@@ -266,7 +266,7 @@ export default function PdfToJpgPage() {
         <CardHeader>
           <div className="flex items-center justify-between">
             <div className="font-semibold">Upload</div>
-            <label className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-black text-white text-sm cursor-pointer">
+            <label className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-indigo-600 text-white text-sm cursor-pointer">
               <input
                 type="file"
                 accept="application/pdf,.pdf"

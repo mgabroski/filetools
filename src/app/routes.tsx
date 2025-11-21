@@ -14,6 +14,7 @@ import JpgToPdfPage from '../features/image/jpg-to-pdf/JpgToPdfPage';
 import ImageCompressorPage from '../features/image/compress/ImageCompressorPage';
 import CollageMakerPage from '../features/image/collage/CollageMakerPage';
 import AnnotatePage from '../features/image/annotate/AnnotatePage';
+import AboutPage from '../pages/AboutPage';
 
 export const router = createBrowserRouter([
   {
@@ -21,6 +22,7 @@ export const router = createBrowserRouter([
     element: <App />,
     children: [
       { index: true, element: <Home /> },
+      { path: "/about", element: <AboutPage /> },
       // PDF Tools
       { path: 'merge-pdf', element: <MergePdfPage /> },
       { path: 'compress-pdf', element: <CompressPdfPage /> },

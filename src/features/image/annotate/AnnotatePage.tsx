@@ -654,7 +654,7 @@ export default function AnnotatePage() {
         <CardHeader>
           <div className="flex items-center justify-between">
             <div className="font-semibold">Upload</div>
-            <label className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-black text-white text-sm cursor-pointer">
+            <label className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-indigo-600 text-white text-sm cursor-pointer">
               <input
                 ref={inputRef}
                 type="file"
@@ -895,7 +895,7 @@ export default function AnnotatePage() {
 
                     <button
                       onClick={onDownload}
-                      className="px-3 py-2 rounded-lg text-sm bg-black text-white flex items-center gap-2"
+                      className="px-3 py-2 rounded-lg text-sm bg-indigo-600 text-white flex items-center gap-2"
                     >
                       <Download size={16} />
                       Download
@@ -948,7 +948,7 @@ function ToolBtn({
     <button
       onClick={onClick}
       className={`px-3 py-1.5 rounded-lg text-sm border flex items-center gap-2 ${
-        active ? 'bg-black text-white border-black' : 'bg-white text-zinc-800 border-zinc-200'
+        active ? 'bg-indigo-600 text-white border-black' : 'bg-white text-zinc-800 border-zinc-200'
       }`}
       title={label}
     >

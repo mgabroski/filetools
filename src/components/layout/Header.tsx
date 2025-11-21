@@ -11,8 +11,7 @@ export function Header() {
         <div className="h-9 hidden sm:flex items-center justify-end text-xs text-zinc-600">
         <nav className="flex items-center gap-4 [&>a:not(:last-child)]:after:content-['|'] [&>a:not(:last-child)]:after:ml-3 [&>a:not(:last-child)]:after:text-zinc-300">
   <Link to="/about" className="hover:text-blue-600 transition">About Us</Link>
-  <Link to="/why-choose-us" className="hover:text-blue-600 transition">Why Choose Us</Link>
-  <a href="/#faq" className="hover:text-blue-600 transition">FAQ</a>
+ <a href="/#faq" className="hover:text-blue-600 transition">FAQ</a>
 </nav>
 
         </div>
@@ -20,12 +19,14 @@ export function Header() {
         {/* Main row */}
         <div className="py-3 flex items-center justify-between relative border-t-1">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2">
-            <div className="size-8 grid place-items-center rounded-xl bg-black text-white font-bold">
-              FT
-            </div>
-            <span className="font-semibold text-zinc-900">FileTools</span>
-          </Link>
+    <Link to="/" className="flex items-center gap-2">
+  <img 
+    src="public/file_tools_logo.svg" 
+    alt="FileTools Logo" 
+    className="h-8 w-auto object-contain"
+  />
+</Link>
+
 
           {/* Desktop nav (центрирано) */}
           <nav className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center gap-3 text-sm">

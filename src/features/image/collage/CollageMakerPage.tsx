@@ -191,7 +191,7 @@ export default function CollageMakerPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-5xl mx-auto">
       <SeoHead
         title="Collage Maker — Fast, Private (In-Browser) | FileTools"
         description="Pick a template, drop photos, tweak spacing & corners, download. Heart, grid, and film strip. All client-side."
@@ -200,26 +200,44 @@ export default function CollageMakerPage() {
         keywords="photo collage, heart collage, grid collage, online collage maker"
       />
 
+      {/* Busy overlay */}
       {busy && (
-        <div className="fixed inset-0 z-30 bg-black/50 grid place-items-center">
-          <div className="rounded-2xl bg-white p-6 w-[min(92vw,560px)] shadow-lg">
-            <h2 className="text-xl font-semibold text-center">{phase}</h2>
-            <p className="text-center text-sm text-zinc-600 mt-1">Please wait…</p>
-            <div className="mt-4 h-2 rounded-full bg-zinc-200 overflow-hidden">
-              <div className="h-full bg-emerald-600 transition-all" style={{ width: '85%' }} />
+        <div className="fixed inset-0 z-30 bg-black/40 backdrop-blur-sm grid place-items-center">
+          <div className="rounded-2xl bg-white p-6 w-[min(92vw,560px)] shadow-xl border border-zinc-200">
+            <h2 className="text-lg sm:text-xl font-semibold text-center text-zinc-900">{phase}</h2>
+            <p className="text-center text-sm text-zinc-600 mt-1">
+              Depending on resolution and number of photos, this can take a few seconds.
+            </p>
+            <div className="mt-5 h-2 rounded-full bg-zinc-200 overflow-hidden">
+              <div className="h-full bg-emerald-600 animate-pulse" style={{ width: '85%' }} />
             </div>
           </div>
         </div>
       )}
 
-      <h1 className="text-2xl font-bold">Collage Maker</h1>
-      <p className="text-sm text-zinc-600">Pick a template → drop photos → tweak → download.</p>
+      {/* Page intro */}
+      <div className="space-y-2">
+        <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-zinc-900">
+          Collage Maker
+        </h1>
+        <p className="text-sm sm:text-base text-zinc-600 max-w-2xl">
+          Drop your photos, choose a layout and aspect ratio, adjust spacing and corners, then
+          download a high-resolution collage — all processed directly in your browser.
+        </p>
+      </div>
 
       <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div className="font-semibold">Upload</div>
-            <label className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-black text-white text-sm cursor-pointer">
+        {/* Upload + summary header */}
+        <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <div className="font-semibold text-zinc-900">Upload photos</div>
+            <p className="text-xs text-zinc-500 mt-0.5">
+              Up to 32 images · JPG, PNG, WEBP · Max {MAX_FILE_BYTES / (1024 * 1024)} MB each.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <label className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-indigo-600 text-white text-sm cursor-pointer hover:bg-zinc-900 transition">
               <input
                 ref={inputRef}
                 type="file"
@@ -228,7 +246,7 @@ export default function CollageMakerPage() {
                 className="hidden"
                 onChange={onPick}
               />
-              Choose Images
+              <span>Choose images</span>
             </label>
           </div>
         </CardHeader>
@@ -245,66 +263,96 @@ export default function CollageMakerPage() {
             }
           }}
         >
-          {/* Reorderable thumbs with 6-dot handle */}
+          {/* Thumbnails */}
           {files.length > 0 && (
-            <div className="flex flex-wrap gap-3 mb-4">
-              {files.map((p, i) => (
-                <div
-                  key={i}
-                  className={`relative flex items-center gap-2 border border-zinc-200 rounded-lg p-2 ${
-                    dragIdx === i ? 'ring-2 ring-emerald-500' : ''
-                  }`}
-                  draggable
-                  onDragStart={() => onDragStart(i)}
-                  onDragOver={(e) => onDragOverThumb(e, i)}
-                  onDragEnd={onDragEnd}
-                >
-                  <div
-                    className="cursor-grab text-zinc-400 mr-1 select-none"
-                    title="Drag to reorder"
-                    aria-hidden
-                  >
-                    <svg width="14" height="18" viewBox="0 0 8 12" fill="currentColor">
-                      <circle cx="2" cy="2" r="1.3" />
-                      <circle cx="6" cy="2" r="1.3" />
-                      <circle cx="2" cy="6" r="1.3" />
-                      <circle cx="6" cy="6" r="1.3" />
-                      <circle cx="2" cy="10" r="1.3" />
-                      <circle cx="6" cy="10" r="1.3" />
-                    </svg>
-                  </div>
-
-                  <img
-                    src={p.url}
-                    alt={`img-${i}`}
-                    className="w-24 h-16 object-cover rounded border border-zinc-200"
-                  />
-
-                  <button
-                    onClick={() => removeAt(i)}
-                    className="ml-1 px-2 py-1 text-[11px] rounded border border-zinc-200 hover:bg-zinc-50"
-                  >
-                    Remove
-                  </button>
+            <div className="mb-4">
+              <div className="flex items-center justify-between mb-2">
+                <div className="text-xs font-medium text-zinc-600">
+                  Photos ({files.length}) — drag to reorder
                 </div>
-              ))}
+                <button
+                  onClick={resetAll}
+                  className="text-xs text-zinc-500 hover:text-zinc-800 underline-offset-2 hover:underline"
+                >
+                  Clear all
+                </button>
+              </div>
+
+              <div className="flex flex-wrap gap-3">
+                {files.map((p, i) => (
+                  <div
+                    key={i}
+                    className={`relative flex items-center gap-2 border border-zinc-200 rounded-xl p-2 bg-white/70 shadow-sm ${
+                      dragIdx === i ? 'ring-2 ring-emerald-500 ring-offset-1' : ''
+                    }`}
+                    draggable
+                    onDragStart={() => onDragStart(i)}
+                    onDragOver={(e) => onDragOverThumb(e, i)}
+                    onDragEnd={onDragEnd}
+                  >
+                    {/* drag handle */}
+                    <div
+                      className="cursor-grab text-zinc-400 mr-1 select-none"
+                      title="Drag to reorder"
+                      aria-hidden
+                    >
+                      <svg width="14" height="18" viewBox="0 0 8 12" fill="currentColor">
+                        <circle cx="2" cy="2" r="1.3" />
+                        <circle cx="6" cy="2" r="1.3" />
+                        <circle cx="2" cy="6" r="1.3" />
+                        <circle cx="6" cy="6" r="1.3" />
+                        <circle cx="2" cy="10" r="1.3" />
+                        <circle cx="6" cy="10" r="1.3" />
+                      </svg>
+                    </div>
+
+                    <img
+                      src={p.url}
+                      alt={`img-${i}`}
+                      className="w-24 h-16 object-cover rounded-md border border-zinc-200 bg-zinc-100"
+                    />
+
+                    <button
+                      onClick={() => removeAt(i)}
+                      className="ml-1 px-2 py-1 text-[11px] rounded-md border border-zinc-200 hover:bg-zinc-50 text-zinc-600"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Drop zone when нема слики */}
+          {files.length === 0 && (
+            <div className="mb-6">
+              <div className="rounded-xl border border-dashed border-zinc-300 bg-zinc-50/80 px-4 py-10 text-center text-sm text-zinc-500">
+                <p className="mb-2 font-medium text-zinc-700">
+                  Drop photos here or click &ldquo;Choose images&rdquo; to start.
+                </p>
+                <p>We&apos;ll build the collage directly in your browser — nothing is uploaded.</p>
+              </div>
             </div>
           )}
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Controls */}
-            <section className="space-y-4">
+            <section className="space-y-5">
+              {/* Templates */}
               <div className="space-y-2">
-                <div className="text-sm font-medium">Templates</div>
+                <div className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
+                  Layout
+                </div>
                 <div className="flex flex-wrap gap-2">
                   {TEMPLATE_OPTIONS.map((t) => (
                     <button
                       key={t.id}
                       onClick={() => setTemplate(t.id)}
-                      className={`px-3 py-1.5 rounded-lg text-sm border ${
+                      className={`px-3 py-1.5 rounded-lg text-xs sm:text-sm border transition ${
                         template === t.id
-                          ? 'bg-black text-white border-black'
-                          : 'bg-white text-zinc-800 border-zinc-200'
+                          ? 'bg-zinc-900 text-white border-zinc-900 shadow-sm'
+                          : 'bg-white text-zinc-800 border-zinc-200 hover:bg-zinc-50'
                       }`}
                     >
                       {t.label}
@@ -313,13 +361,14 @@ export default function CollageMakerPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <label className="text-sm">
-                  <div className="font-medium">Aspect</div>
+              {/* Sliders + selects */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <label className="text-sm space-y-1">
+                  <div className="font-medium text-zinc-800">Aspect</div>
                   <select
                     value={aspect}
                     onChange={(e) => setAspect(e.target.value as Aspect)}
-                    className="w-full border rounded px-2 py-1.5 text-sm"
+                    className="w-full border rounded-lg px-2.5 py-1.5 text-sm bg-white"
                   >
                     <option value="square">Square</option>
                     <option value="4:5">4:5 (Portrait)</option>
@@ -330,20 +379,23 @@ export default function CollageMakerPage() {
                   </select>
                 </label>
 
-                <label className="text-sm">
-                  <div className="font-medium">Fit</div>
+                <label className="text-sm space-y-1">
+                  <div className="font-medium text-zinc-800">Fit</div>
                   <select
                     value={fit}
                     onChange={(e) => setFit(e.target.value as FitMode)}
-                    className="w-full border rounded px-2 py-1.5 text-sm"
+                    className="w-full border rounded-lg px-2.5 py-1.5 text-sm bg-white"
                   >
                     <option value="fill">Fill (crop to fill)</option>
                     <option value="fit">Fit (no crop)</option>
                   </select>
                 </label>
 
-                <label className="text-sm col-span-2">
-                  <div className="font-medium">Spacing</div>
+                <label className="text-sm col-span-2 space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium text-zinc-800">Spacing</span>
+                    <span className="text-xs text-zinc-500">{spacing}px</span>
+                  </div>
                   <input
                     type="range"
                     min={0}
@@ -353,11 +405,16 @@ export default function CollageMakerPage() {
                     onChange={(e) => setSpacing(parseInt(e.target.value, 10))}
                     className="w-full"
                   />
-                  <div className="text-xs text-zinc-500">Controls margins & gutters together.</div>
+                  <div className="text-[11px] text-zinc-500">
+                    Controls outer margin and space between cells.
+                  </div>
                 </label>
 
-                <label className="text-sm col-span-2">
-                  <div className="font-medium">Corner radius</div>
+                <label className="text-sm col-span-2 space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium text-zinc-800">Corner radius</span>
+                    <span className="text-xs text-zinc-500">{cornerRadius}px</span>
+                  </div>
                   <input
                     type="range"
                     min={0}
@@ -369,54 +426,63 @@ export default function CollageMakerPage() {
                   />
                 </label>
 
-                <label className="text-sm">
-                  <div className="font-medium">Background</div>
+                <label className="text-sm space-y-1">
+                  <div className="font-medium text-zinc-800">Background</div>
                   <input
                     value={bg}
                     onChange={(e) => setBg(e.target.value)}
-                    className="w-full border rounded px-2 py-1.5 text-sm"
+                    className="w-full border rounded-lg px-2.5 py-1.5 text-sm bg-white"
                     placeholder="#ffffff"
                   />
                 </label>
 
-                <label className="text-sm">
-                  <div className="font-medium">Fill cells</div>
+                <label className="text-sm space-y-1">
+                  <div className="font-medium text-zinc-800">Fill cells</div>
                   <select
                     value={fillPolicy}
                     onChange={(e) => setFillPolicy(e.target.value as FillPolicy)}
-                    className="w-full border rounded px-2 py-1.5 text-sm"
+                    className="w-full border rounded-lg px-2.5 py-1.5 text-sm bg-white"
                   >
-                    <option value="blank">First N only (leave empty)</option>
-                    <option value="repeat">Repeat images to fill</option>
+                    <option value="blank">Use first N photos (leave empty)</option>
+                    <option value="repeat">Repeat photos to fill layout</option>
                   </select>
                 </label>
 
-                <label className="text-sm">
-                  <div className="font-medium">Output width (px)</div>
+                <label className="text-sm space-y-1">
+                  <div className="font-medium text-zinc-800">Output width (px)</div>
                   <input
                     type="number"
                     min={512}
                     value={outW}
-                    onChange={(e) => setOutW(Math.max(512, parseInt(e.target.value || '0', 10)))}
-                    className="w-full border rounded px-2 py-1.5 text-sm"
+                    onChange={(e) =>
+                      setOutW(Math.max(512, parseInt(e.target.value || '0', 10)))
+                    }
+                    className="w-full border rounded-lg px-2.5 py-1.5 text-sm bg-white"
                   />
                 </label>
 
-                <label className="text-sm">
-                  <div className="font-medium">Format</div>
+                <label className="text-sm space-y-1">
+                  <div className="font-medium text-zinc-800">Format</div>
                   <select
                     value={format}
-                    onChange={(e) => setFormat(e.target.value as 'image/png' | 'image/jpeg')}
-                    className="w-full border rounded px-2 py-1.5 text-sm"
+                    onChange={(e) =>
+                      setFormat(e.target.value as 'image/png' | 'image/jpeg')
+                    }
+                    className="w-full border rounded-lg px-2.5 py-1.5 text-sm bg-white"
                   >
                     <option value="image/png">PNG (.png)</option>
                     <option value="image/jpeg">JPEG (.jpg)</option>
                   </select>
                 </label>
 
-                <label className="text-sm col-span-2">
-                  <div className="font-medium">
-                    Quality {format === 'image/png' ? '(n/a)' : `(${quality.toFixed(2)})`}
+                <label className="text-sm col-span-2 space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium text-zinc-800">Quality</span>
+                    <span className="text-xs text-zinc-500">
+                      {format === 'image/png'
+                        ? 'Lossless (controlled by PNG)'
+                        : quality.toFixed(2)}
+                    </span>
                   </div>
                   <input
                     type="range"
@@ -425,47 +491,54 @@ export default function CollageMakerPage() {
                     step={0.01}
                     value={quality}
                     onChange={(e) => setQuality(parseFloat(e.target.value))}
-                    className="w-full disabled:opacity-50"
+                    className="w-full disabled:opacity-40"
                     disabled={format === 'image/png'}
                   />
                 </label>
               </div>
 
               {/* Actions */}
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2 pt-1">
                 <button
                   onClick={resetAll}
-                  className="px-3 py-2 rounded-lg text-sm border border-zinc-200 hover:bg-zinc-50"
+                  className="px-3 py-2 rounded-lg text-sm border border-zinc-200 hover:bg-zinc-50 text-zinc-700"
                 >
                   Reset
                 </button>
                 <button
                   onClick={onDownload}
                   disabled={!files.length}
-                  className={`px-4 py-2 rounded-lg text-sm ${
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
                     files.length
-                      ? 'bg-black text-white'
+                      ? 'bg-black text-white hover:bg-zinc-900'
                       : 'bg-zinc-200 text-zinc-500 cursor-not-allowed'
                   }`}
                 >
-                  Download
+                  Download collage
                 </button>
               </div>
 
-              <div className="text-xs text-zinc-500">
-                Private by design — processing happens in your browser.
+              <div className="text-[11px] text-zinc-500">
+                Private by design — all rendering happens locally in your browser.
               </div>
             </section>
 
             {/* Preview */}
-            <section className="rounded-md border border-zinc-200 bg-zinc-50 p-3">
-              <div className="text-xs font-medium mb-2 text-zinc-700">Preview</div>
-              <div className="rounded-md overflow-hidden grid place-items-center bg-white min-h-[180px]">
+            <section className="rounded-xl border border-zinc-200 bg-zinc-50/80 p-3 sm:p-4">
+              <div className="flex items-center justify-between mb-2">
+                <div className="text-xs font-medium text-zinc-700">Live preview</div>
+                <div className="text-[11px] text-zinc-500">
+                  Aspect {aspect} · {outW}px wide
+                </div>
+              </div>
+              <div className="rounded-lg overflow-hidden grid place-items-center bg-white min-h-[200px] sm:min-h-[260px]">
                 {previewUrl ? (
                   <img src={previewUrl} alt="Preview" className="max-w-full h-auto" />
                 ) : (
-                  <div className="text-xs text-zinc-500 py-10">
-                    {files.length ? phase : 'Add some photos to see the preview.'}
+                  <div className="text-xs text-zinc-500 py-10 px-4 text-center">
+                    {files.length
+                      ? phase
+                      : 'Add a few photos and tweak the options on the left to see your collage preview here.'}
                   </div>
                 )}
               </div>
